@@ -3,11 +3,10 @@ extends CharacterBody3D
 @export var speed : float = 5.0
 @export var jump_vel : float = 4.5
 @export var mouse_sens : float = 2
+@onready var camera : Camera3D = $Camera
 
 var mouse_axis : Vector2
 var gravity : float = ProjectSettings.get_setting("physics/3d/default_gravity")
-
-@onready var camera : Camera3D = $Camera
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -17,6 +16,10 @@ func _input(event) -> void:
 		mouse_axis = event.relative
 		camera.rotation.y -= mouse_axis.x * mouse_sens * .001
 		camera.rotation.x = clamp(camera.rotation.x - mouse_axis.y * mouse_sens * .001, -1.5, 1.5)
+	if Input.is_key_pressed(KEY_ESCAPE):
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and Input.get_mouse_mode() == Input.MOUSE_MODE_VISIBLE:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _physics_process(delta):
 	if not is_on_floor(): velocity.y -= gravity * delta
